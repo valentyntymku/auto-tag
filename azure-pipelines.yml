@@ -67,7 +67,7 @@ steps:
     regionName: ${{ parameters.region }}
     stackName: cf-jbl-auto-tag
     templateFile: ./cloud_formation/event_multi_region_template/autotag_event_main-template.json
-    templateParametersSource: 'Inline'
+    templateParametersSource: 'inline'
     templateParameters: |
       [
         {
