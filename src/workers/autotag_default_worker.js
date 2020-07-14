@@ -2,14 +2,14 @@ import get from 'lodash/get';
 import * as AWS from 'aws-sdk';
 import SETTINGS from '../autotag_settings';
 
-export const AUTOTAG_TAG_NAME_PREFIX = 'AutoTag_';
-const AUTOTAG_CREATOR_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}Creator`;
-const AUTOTAG_CREATE_TIME_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}CreateTime`;
-const AUTOTAG_INVOKED_BY_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}InvokedBy`;
+export const AUTOTAG_TAG_NAME_PREFIX = 'jbl:';
+const AUTOTAG_CREATOR_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}creator_arn`;
+const AUTOTAG_CREATE_TIME_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}created_datetime`;
+const AUTOTAG_INVOKED_BY_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}invoked_by`;
 const ROLE_PREFIX = 'arn:aws:iam::';
 const ROLE_SUFFIX = ':role';
 // const MASTER_ROLE_NAME = 'AutoTagMasterRole';
-const MASTER_ROLE_PATH = '/gorillastack/autotag/master/';
+const MASTER_ROLE_PATH = '/autotag/master/';
 
 class AutotagDefaultWorker {
   constructor(event, s3Region) {

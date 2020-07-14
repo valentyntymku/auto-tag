@@ -76,8 +76,8 @@
                 "iam:DetachRolePolicy"
             ],
             "Resource": [
-                "arn:aws:iam::*:role/gorillastack/autotag/master/AutoTag",
-                "arn:aws:iam::*:role/gorillastack/autotag/execution/AutoTagLambda"
+                "arn:aws:iam::*:role/autotag/master/AutoTag",
+                "arn:aws:iam::*:role/autotag/execution/AutoTagLambda"
             ]
         },
         {
@@ -86,7 +86,7 @@
             "Action": [
                 "iam:PassRole"
             ],
-            "Resource": "arn:aws:iam::*:role/gorillastack/autotag/execution/AutoTagLambda"
+            "Resource": "arn:aws:iam::*:role/autotag/execution/AutoTagLambda"
         }
     ]
 }

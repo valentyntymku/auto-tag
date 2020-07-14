@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Auto Tag (Open Source by GorillaStack)",
+  "Description": "Auto Tag",
 
   "Parameters" : {
     "MainAwsRegion" : {

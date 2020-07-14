@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
-  "Description" : "Auto Tag (Open Source by GorillaStack)",
+  "Description" : "Auto Tag",
   "Parameters" : {
 
     "CodeS3Bucket" : {
@@ -61,8 +61,8 @@
           "S3Bucket": { "Ref" : "CodeS3Bucket" },
           "S3Key": { "Ref" : "CodeS3Path" }
         },
-        "Description" : "Auto Tag (Open Source by GorillaStack)",
-        "FunctionName" : "AutoTag",
+        "Description" : "Auto Tag",
+        "FunctionName" : "JblAutoTag",
         "Handler" : "autotag_event.handler",
         "Role" : { "Fn::GetAtt" : [ "AutoTagExecutionRole", "Arn" ] },
         "Runtime" : "nodejs10.x",
@@ -103,7 +103,7 @@
             }
           ]
         },
-        "Path": "/gorillastack/autotag/execution/"
+        "Path": "/autotag/execution/"
       }
     },
 
@@ -154,7 +154,7 @@
             }
           ]
         },
-        "Path": "/gorillastack/autotag/master/"
+        "Path": "/autotag/master/"
       }
     },
 

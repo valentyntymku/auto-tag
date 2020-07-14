@@ -1,11 +1,11 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Auto Tag (Open Source by GorillaStack)",
+  "Description": "Auto Tag",
   "Parameters": {
     "CodeS3Bucket": {
       "Description": "The name of the code bucket in S3.",
       "Type": "String",
-      "Default": "gorillastack-autotag-releases-ap-northeast-1"
+      "Default": "jbl-autotag-releases-ap-northeast-1"
     },
     "CodeS3Path": {
       "Description": "The path of the code zip file in the code bucket in S3.",
@@ -71,8 +71,8 @@
             "Ref": "CodeS3Path"
           }
         },
-        "Description": "Auto Tag (Open Source by GorillaStack)",
-        "FunctionName": "AutoTag",
+        "Description": "Auto Tag",
+        "FunctionName": "jbl-auto-tag",
         "Handler": {
           "Fn::Sub": "autotag_event.handler"
         },
@@ -163,7 +163,7 @@
             }
           ]
         },
-        "Path": "/gorillastack/autotag/execution/"
+        "Path": "/autotag/execution/"
       }
     },
     "AutoTagExecutionPolicy": {
@@ -196,7 +196,7 @@
               ],
               "Resource": [
                 {
-                  "Fn::Sub": "arn:aws:iam::*:role/gorillastack/autotag/master/${AWS::StackName}"
+                  "Fn::Sub": "arn:aws:iam::*:role/autotag/master/${AWS::StackName}"
                 }
               ]
             }
@@ -228,7 +228,7 @@
             }
           ]
         },
-        "Path": "/gorillastack/autotag/master/"
+        "Path": "/autotag/master/"
       }
     },
     "AutoTagMasterPolicy": {

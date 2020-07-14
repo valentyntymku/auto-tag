@@ -31,7 +31,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:GorillaStack/autotag.git"
+    "url": "git@github.com:valentyntymku/auto-tag.git"
   },
   "author": "Elliott Spira",
   "license": "ISC",
