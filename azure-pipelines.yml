@@ -35,6 +35,6 @@ steps:
     regionName: 'us-east-1'
     bucketName: 'jbl-auto-tag'
     createBucket: true
-	  sourceFolder: './'
+    sourceFolder: './'
     targetFolder: 'releases'
     globExpressions: '*.zip'
