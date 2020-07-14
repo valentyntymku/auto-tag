@@ -17,14 +17,16 @@ steps:
 
 - script: |
     npm install
-    npm run compile
+    npm run test
     npm run lint
-    npm test
+    npm run compile
   displayName: 'npm install and build'
 
 - script: |
-    build-package  'local'
-    upload-package 'local'
+    cp package.json lib/
+    npm install --prefix lib/ --production
+    rm -rf lib/node_modules/aws-sdk
+    cd lib
+    zip -x\*.zip -qr9 "autotag-${BUILD_TYPE}.zip" -- *
     ls . 
-    ls ./local-build
   displayName: 'Create ZIP'
