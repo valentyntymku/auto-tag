@@ -21,3 +21,10 @@ steps:
     npm run lint
     npm test
   displayName: 'npm install and build'
+
+- script: |
+    build-package  'local'
+    upload-package 'local'
+    ls . 
+    ls ./local-build
+  displayName: 'Create ZIP'
