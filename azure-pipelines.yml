@@ -100,7 +100,7 @@ steps:
     capabilityIAM: true
     capabilityNamedIAM: true
     tags: |
-      jbl:name=cft-jbl-${{ parameters.environment }}-${{ region }}-auto-tag
+      jbl:name=cft-jbl-${{ parameters.environment }}-${{ parameters.region }}-auto-tag
       jbl:cost_center=4150
       jbl:division=EMS
       jbl:site=GLOBAL
