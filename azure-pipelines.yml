@@ -37,7 +37,7 @@ steps:
     npm install --prefix lib/ --production
     rm -rf lib/node_modules/aws-sdk
     cd lib
-    zip -x\*.zip -qr9 "autotag-local.zip" -- *
+    zip -x\*.zip -qr9 "autotag-local-$(Build.BuildNumber).zip" -- *
     ls . 
   displayName: 'Create ZIP'
 
