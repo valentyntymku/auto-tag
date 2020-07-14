@@ -1,10 +1,12 @@
-# Node.js
-# Build a general Node.js project with npm.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+parameters:
+  regions: []
+  awsCred: ''
+  environment: ''
 
-trigger:
-- develop
+#trigger:
+#- develop
+trigger: none
+
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -27,6 +29,17 @@ steps:
     npm install --prefix lib/ --production
     rm -rf lib/node_modules/aws-sdk
     cd lib
-    zip -x\*.zip -qr9 "autotag-${BUILD_TYPE}.zip" -- *
+    zip -x\*.zip -qr9 "autotag-local.zip" -- *
     ls . 
   displayName: 'Create ZIP'
+
+- task: S3Upload@1
+  displayName: 'Upload ZIP to S3 bucket'
+  inputs:
+    awsCredentials: 'aws-ems-dev'
+    regionName: 'us-east-1'
+	  bucketName: 'jbl-auto-tag'
+    createBucket: true
+	  sourceFolder: './'
+    targetFolder: 'releases'
+    globExpressions: '*.zip'
