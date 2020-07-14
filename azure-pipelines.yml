@@ -33,8 +33,8 @@ steps:
   inputs:
     awsCredentials: 'aws-ems-dev'
     regionName: 'us-east-1'
-    bucketName: 'jbl-auto-tag'
+    bucketName: 's3-jbl-auto-tag'
     createBucket: true
-    sourceFolder: './'
+    sourceFolder: './lib'
     targetFolder: 'releases'
-    globExpressions: '*.zip'
+    globExpressions: 'autotag-local.zip'
