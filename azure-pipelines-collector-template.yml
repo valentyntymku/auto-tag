@@ -1,0 +1,33 @@
+parameters:
+  region: ''
+  regions: []
+  awsCred: ''
+  environment: ''
+
+steps:
+- ${{ each region in parameters.regions }}:
+  - task: CloudFormationCreateOrUpdateStack@1
+    inputs:
+      awsCredentials: ${{ parameters.awsCred }}
+      regionName: ${{ region }}
+      stackName: cf-jbl-auto-tag-collector
+      templateFile: ./cloud_formation/event_multi_region_template/autotag_event_collector-template.json
+      templateParametersSource: 'inline'
+      templateParameters: |
+        [  
+          {
+            "ParameterKey": "MainAwsRegion",
+            "ParameterValue": "${{ parameters.region }}"
+          }
+        ]
+      capabilityIAM: true
+      capabilityNamedIAM: true
+      tags: |
+        jbl:name=cft-jbl-${{ parameters.environment }}-${{ region }}-auto-tag-collector
+        jbl:cost_center=4150
+        jbl:division=EMS
+        jbl:site=GLOBAL
+        jbl:project_name=infrastructure
+        jbl:owner_email=aws_operations@jabil.com
+        jbl:created_date=2020-03-01
+        jbl:support_team_email=aws_operations@jabil.com

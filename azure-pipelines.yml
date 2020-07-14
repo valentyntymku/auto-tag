@@ -61,7 +61,7 @@ steps:
     globExpressions: 'autotag-local-$(Build.BuildNumber).zip'
 
 - task: CloudFormationCreateOrUpdateStack@1
-  displayName: 'CloudFormation deloy main stack'
+  displayName: 'CloudFormation deploy main stack'
   inputs:
     awsCredentials: 'aws-ems-dev'
     regionName: ${{ parameters.region }}
@@ -110,3 +110,16 @@ steps:
       jbl:owner_email=aws_operations@jabil.com
       jbl:created_date=2020-03-01
       jbl:support_team_email=aws_operations@jabil.com
+
+- template: azure-pipelines-collector-template.yml
+  parameters:
+    region: ${{ parameters.region }}
+    regions:
+    - us-east-1
+    - us-west-2
+    - eu-central-1
+    - eu-west-2
+    - ap-southeast-1
+    - ap-northeast-1
+    environment: ${{ parameters.environment }}
+    awsCred: aws-ems-dev
