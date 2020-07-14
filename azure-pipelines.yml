@@ -10,11 +10,19 @@ parameters:
   - eu-west-2
   - ap-southeast-1
   - ap-northeast-1
+- name: environment
+  displayName: Environment
+  type: string
+  default: dev
+  values:
+  - dev
+  - stg
+  - prd
+  - lab
 
 #trigger:
 #- develop
 trigger: none
-
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -52,12 +60,51 @@ steps:
     targetFolder: 'releases'
     globExpressions: 'autotag-local-$(Build.BuildNumber).zip'
 
-#- task: CloudFormationCreateOrUpdateStack@1
-#  inputs:
-#    awsCredentials: ${{ parameters.awsCred }}
-#    regionName: ${{ parameters.region }}
-#    stackName: cft-jbl-auto-tag
-#    templateFile: AWS/LandingZone/EMS/cft-jbl-ems-VPCSetup-01.yml
-#    templateParametersFile: 'AWS/LandingZone/EMS/parameters-ems-${{ parameters.environment }}-${{ region }}.yml'
-#    capabilityIAM: true
-#    capabilityNamedIAM: true
+- task: CloudFormationCreateOrUpdateStack@1
+  inputs:
+    awsCredentials: 'aws-ems-dev'
+    regionName: ${{ parameters.region }}
+    stackName: cf-jbl-auto-tag
+    templateFile: ./cloud_formation/event_multi_region_template/autotag_event_main-template.json
+    templateParameters: |
+      [
+        {
+          "ParameterKey": "CodeS3Bucket",
+          "ParameterValue": "s3-jbl-auto-tag"
+        },
+        {
+          "ParameterKey": "CodeS3Path",
+          "ParameterValue": "releases/autotag-local-$(Build.BuildNumber).zip"
+        },
+        {
+          "ParameterKey": "AutoTagDebugLogging",
+          "ParameterValue": "Enabled"
+        },
+        {
+          "ParameterKey": "AutoTagTagsCreateTime",
+          "ParameterValue": "Enabled"
+        },
+        {
+          "ParameterKey": "AutoTagTagsInvokedBy",
+          "ParameterValue": "Enabled"
+        },
+        {
+          "ParameterKey": "LogRetentionInDays",
+          "ParameterValue": "90"
+        },
+        {
+          "ParameterKey": "CustomTags",
+          "ParameterValue": ""
+        }
+      ]
+    capabilityIAM: true
+    capabilityNamedIAM: true
+    tags: |
+      jbl:name=cft-jbl-${{ parameters.environment }}-${{ region }}-auto-tag
+      jbl:cost_center=4150
+      jbl:division=EMS
+      jbl:site=GLOBAL
+      jbl:project_name=infrastructure
+      jbl:owner_email=aws_operations@jabil.com
+      jbl:created_date=2020-03-01
+      jbl:support_team_email=aws_operations@jabil.com
