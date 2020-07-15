@@ -4,6 +4,9 @@ parameters:
   awsCred: ''
   environment: ''
 
+variables:
+  currdate: $(Get-Date -Format yyyy-MM-dd)
+
 steps:
 - ${{ each region in parameters.regions }}:
   - task: CloudFormationCreateOrUpdateStack@1
@@ -30,5 +33,5 @@ steps:
         jbl:site=GLOBAL
         jbl:project_name=infrastructure
         jbl:owner_email=aws_operations@jabil.com
-        jbl:created_date=$(Date:yyyyMMdd)
+        jbl:created_date=${{ currdate }}
         jbl:support_team_email=aws_operations@jabil.com
