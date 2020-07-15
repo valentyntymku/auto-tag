@@ -4,10 +4,6 @@ parameters:
   awsCred: ''
   environment: ''
 
-variables:
-- name: currdate
-  value: $(Get-Date -Format yyyy-MM-dd)
-
 steps:
 - ${{ each region in parameters.regions }}:
   - task: CloudFormationCreateOrUpdateStack@1
