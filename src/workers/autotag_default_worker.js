@@ -102,11 +102,11 @@ class AutotagDefaultWorker {
   getAutotagTags() {
     return [
       this.getAutotagCreatorTag(),
+      this.getAutotagOwnerEmailTag(),
+      this.getAutotagCreatedDateTag(),
+      this.getAutotagCostCenterTag(),
       ...(SETTINGS.AutoTags.CreateTime ? [this.getAutotagCreateTimeTag()] : []),
       ...(this.getInvokedByTagValue() && SETTINGS.AutoTags.InvokedBy ? [this.getAutotagInvokedByTag()] : []),
-      ...this.getAutotagOwnerEmailTag,
-      ...this.getAutotagCreatedDateTag,
-      ...this.getAutotagCostCenterTag,
       ...this.getCustomTags()
     ];
   }
