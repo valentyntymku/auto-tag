@@ -20,9 +20,6 @@ parameters:
   - prd
   - lab
 
-variables:
-  currdate: "$(Date:yyyyMMdd)"
-
 #trigger:
 #- develop
 trigger: none
@@ -111,7 +108,7 @@ steps:
       jbl:site=GLOBAL
       jbl:project_name=infrastructure
       jbl:owner_email=aws_operations@jabil.com
-      jbl:created_date=${{ variables.currdate }}
+      jbl:created_date=2020-01-01
       jbl:support_team_email=aws_operations@jabil.com
 
 - template: azure-pipelines-collector-template.yml
