@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Auto Tag",
+  "Description": "Auto Tag Collector",
 
   "Parameters" : {
     "MainAwsRegion" : {
@@ -127,7 +127,7 @@
     "AutoTagSNSSubscription": {
       "Type": "AWS::SNS::Subscription",
       "Properties": {
-        "Endpoint": { "Fn::Sub": "arn:aws:lambda:${MainAwsRegion}:${AWS::AccountId}:function:AutoTag" },
+        "Endpoint": { "Fn::Sub": "arn:aws:lambda:${MainAwsRegion}:${AWS::AccountId}:function:jbl-auto-tag" },
         "Protocol": "lambda",
         "TopicArn": {
           "Ref": "AutoTagSNSTopic"

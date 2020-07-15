@@ -7,6 +7,7 @@ parameters:
 steps:
 - ${{ each region in parameters.regions }}:
   - task: CloudFormationCreateOrUpdateStack@1
+    displayName: 'CloudFormation deploy collector stack in ${{ region }}'
     inputs:
       awsCredentials: ${{ parameters.awsCred }}
       regionName: ${{ region }}

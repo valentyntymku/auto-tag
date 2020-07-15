@@ -61,7 +61,7 @@ steps:
     globExpressions: 'autotag-local-$(Build.BuildNumber).zip'
 
 - task: CloudFormationCreateOrUpdateStack@1
-  displayName: 'CloudFormation deploy main stack'
+  displayName: 'CloudFormation deploy main stack in ${{ parameters.region }}'
   inputs:
     awsCredentials: 'aws-ems-dev'
     regionName: ${{ parameters.region }}
