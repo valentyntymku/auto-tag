@@ -149,7 +149,7 @@ class AutotagDefaultWorker {
   getAutotagCostCenterTag() {
     return {
       Key: this.getCostCenterTagName(),
-      Value: this.getCostCenterValue()
+      Value: this.getCostCenterTagValue()
     };
   }
 
