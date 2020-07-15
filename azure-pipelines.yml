@@ -21,7 +21,8 @@ parameters:
   - lab
 
 variables:
-  currdate: $(Get-Date -Format yyyy-MM-dd)
+- name: currdate
+  value: $(Get-Date -Format yyyy-MM-dd)
 
 #trigger:
 #- develop
@@ -111,7 +112,7 @@ steps:
       jbl:site=GLOBAL
       jbl:project_name=infrastructure
       jbl:owner_email=aws_operations@jabil.com
-      jbl:created_date=${{ currdate }}
+      jbl:created_date=${{ variables.currdate }}
       jbl:support_team_email=aws_operations@jabil.com
 
 - template: azure-pipelines-collector-template.yml
