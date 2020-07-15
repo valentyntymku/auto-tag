@@ -188,7 +188,7 @@ class AutotagDefaultWorker {
     return (this.event.userIdentity && this.event.userIdentity.invokedBy ? this.event.userIdentity.invokedBy : false);
   }
 
-  getOwnerEmailName() {
+  getOwnerEmailTagName() {
     return AUTOTAG_OWNER_EMAIL_TAG_NAME;
   }
 
@@ -196,7 +196,7 @@ class AutotagDefaultWorker {
     return (this.event.userIdentity.arn).match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)[0];
   }
 
-  getCreatedDateName() {
+  getCreatedDateTagName() {
     return AUTOTAG_CREATED_DATE_TAG_NAME;
   }
 
@@ -204,7 +204,7 @@ class AutotagDefaultWorker {
     return new Date(this.event.eventTime).toISOString().slice(0,10);
   }
 
-  getCostCenterName() {
+  getCostCenterTagName() {
     return AUTOTAG_COST_CENTER_TAG_NAME;
   }
 
