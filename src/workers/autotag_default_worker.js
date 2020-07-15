@@ -6,6 +6,11 @@ export const AUTOTAG_TAG_NAME_PREFIX = 'jbl:';
 const AUTOTAG_CREATOR_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}creator_arn`;
 const AUTOTAG_CREATE_TIME_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}created_datetime`;
 const AUTOTAG_INVOKED_BY_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}invoked_by`;
+
+const AUTOTAG_OWNER_EMAIL_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}owner_email`;
+const AUTOTAG_CREATED_DATE_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}created_date`;
+const AUTOTAG_COST_CENTER_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}cost_center`;
+
 const ROLE_PREFIX = 'arn:aws:iam::';
 const ROLE_SUFFIX = ':role';
 // const MASTER_ROLE_NAME = 'AutoTagMasterRole';
@@ -99,6 +104,9 @@ class AutotagDefaultWorker {
       this.getAutotagCreatorTag(),
       ...(SETTINGS.AutoTags.CreateTime ? [this.getAutotagCreateTimeTag()] : []),
       ...(this.getInvokedByTagValue() && SETTINGS.AutoTags.InvokedBy ? [this.getAutotagInvokedByTag()] : []),
+      ...this.getAutotagOwnerEmailTag,
+      ...this.getAutotagCreatedDateTag,
+      ...this.getAutotagCostCenterTag,
       ...this.getCustomTags()
     ];
   }
@@ -124,6 +132,27 @@ class AutotagDefaultWorker {
     };
   }
 
+  getAutotagOwnerEmailTag() {
+    return {
+      Key: this.getOwnerEmailTagName(),
+      Value: this.getOwnerEmailTagValue()
+    };
+  }
+
+  getAutotagCreatedDateTag() {
+    return {
+      Key: this.getCreatedDateTagName(),
+      Value: this.getCreatedDateTagValue()
+    };
+  }
+
+  getAutotagCostCenterTag() {
+    return {
+      Key: this.getCostCenterTagName(),
+      Value: this.getCostCenterValue()
+    };
+  }
+
   getCreatorTagName() {
     return AUTOTAG_CREATOR_TAG_NAME;
   }
@@ -136,8 +165,8 @@ class AutotagDefaultWorker {
         && this.event.userIdentity.sessionContext.sessionIssuer
         && this.event.userIdentity.sessionContext.sessionIssuer.arn) {
       return this.event.userIdentity.sessionContext.sessionIssuer.arn;
-    } else if (this.event.userIdentity.type === 'AssumedRole') {
-      return (this.event.userIdentity.arn).match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)[0];
+    //} else if (this.event.userIdentity.type === 'AssumedRole') {
+    //  return (this.event.userIdentity.arn).match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)[0];
     } else {
       return this.event.userIdentity.arn;
     }
@@ -157,6 +186,30 @@ class AutotagDefaultWorker {
 
   getInvokedByTagValue() {
     return (this.event.userIdentity && this.event.userIdentity.invokedBy ? this.event.userIdentity.invokedBy : false);
+  }
+
+  getOwnerEmailName() {
+    return AUTOTAG_OWNER_EMAIL_TAG_NAME;
+  }
+
+  getOwnerEmailTagValue() {
+    return (this.event.userIdentity.arn).match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)[0];
+  }
+
+  getCreatedDateName() {
+    return AUTOTAG_CREATED_DATE_TAG_NAME;
+  }
+
+  getCreatedDateTagValue() {
+    return new Date(this.event.eventTime).toISOString().slice(0,10);
+  }
+
+  getCostCenterName() {
+    return AUTOTAG_COST_CENTER_TAG_NAME;
+  }
+
+  getCostCenterTagValue() {
+    return "";
   }
 
   getCustomTags() {
