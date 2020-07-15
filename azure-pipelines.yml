@@ -21,7 +21,7 @@ parameters:
   - lab
 
 variables:
-  currdate: '$(Date:yyyyMMdd)'
+  currdate: "$(Date:yyyyMMdd)"
 
 #trigger:
 #- develop
