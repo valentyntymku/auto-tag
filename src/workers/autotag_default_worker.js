@@ -136,6 +136,8 @@ class AutotagDefaultWorker {
         && this.event.userIdentity.sessionContext.sessionIssuer
         && this.event.userIdentity.sessionContext.sessionIssuer.arn) {
       return this.event.userIdentity.sessionContext.sessionIssuer.arn;
+    } else if (this.event.userIdentity.type === 'AssumedRole') {
+      return (this.event.userIdentity.arn).match(/(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/);
     } else {
       return this.event.userIdentity.arn;
     }
