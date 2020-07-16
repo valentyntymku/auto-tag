@@ -102,9 +102,11 @@ class AutotagDefaultWorker {
   getAutotagTags() {
     return [
       this.getAutotagCreatorTag(),
-      this.getAutotagOwnerEmailTag(),
       this.getAutotagCreatedDateTag(),
-      this.getAutotagCostCenterTag(),
+      ...(this.getOwnerEmailTagValue() && SETTINGS.AutoTags.OwnerEmail ? [this.getAutotagOwnerEmailTag()] : []),
+      ...(this.getCostCenterTagValue() && SETTINGS.AutoTags.CostCenter ? [this.getAutotagCostCenterTag()] : []),
+      //this.getAutotagOwnerEmailTag(),
+      //this.getAutotagCostCenterTag(),
       ...(SETTINGS.AutoTags.CreateTime ? [this.getAutotagCreateTimeTag()] : []),
       ...(this.getInvokedByTagValue() && SETTINGS.AutoTags.InvokedBy ? [this.getAutotagInvokedByTag()] : []),
       ...this.getCustomTags()
@@ -196,7 +198,7 @@ class AutotagDefaultWorker {
     if ((this.event.userIdentity.arn).match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)) {
       return (this.event.userIdentity.arn).match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)[0];
     } else {
-      return "";
+      return false;
     }
   }
 
@@ -213,7 +215,11 @@ class AutotagDefaultWorker {
   }
 
   getCostCenterTagValue() {
-    return "";
+    return (this.event.userIdentity && getOwnerEmailTagValue() ? getCostCenterByEmail() : false);
+  }
+
+  getCostCenterByEmail() {
+    return false;
   }
 
   getCustomTags() {
