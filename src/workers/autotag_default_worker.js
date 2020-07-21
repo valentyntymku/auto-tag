@@ -221,7 +221,7 @@ class AutotagDefaultWorker {
     return (this.event.userIdentity && this.getOwnerEmailTagValue() ? this.getCostCenterByEmail() : false);
   }
 
-  getCostCenterByEmail() {
+  async getCostCenterByEmail() {
     if (this.getOwnerEmailTagValue() && this.getServiceNowCredentials()) {
       var serviceNowCredentials = this.getServiceNowCredentials();
       var getUserURL = "https://jabilit.service-now.com/api/now/table/sys_user?sysparm_query=email=" + this.getOwnerEmailTagValue();
