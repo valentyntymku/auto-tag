@@ -108,8 +108,6 @@ class AutotagDefaultWorker {
       this.getAutotagCreatedDateTag(),
       ...(this.getOwnerEmailTagValue() && SETTINGS.AutoTags.OwnerEmail ? [this.getAutotagOwnerEmailTag()] : []),
       ...(this.getCostCenterTagValue() && SETTINGS.AutoTags.CostCenter ? [this.getAutotagCostCenterTag()] : []),
-      //this.getAutotagOwnerEmailTag(),
-      //this.getAutotagCostCenterTag(),
       ...(SETTINGS.AutoTags.CreateTime ? [this.getAutotagCreateTimeTag()] : []),
       ...(this.getInvokedByTagValue() && SETTINGS.AutoTags.InvokedBy ? [this.getAutotagInvokedByTag()] : []),
       ...this.getCustomTags()
@@ -251,25 +249,35 @@ class AutotagDefaultWorker {
       });
 
       var costCenterURL = getUserResponse.body.result[0].cost_center.link;
+      console.log(costCenterURL);
 
-      dataString = '';
-      const costCenterResponse = await new Promise((resolve, reject) => {
-        const req = https.get(costCenterURL, options, function(res) {
-          res.on('data', chunk => {
-            dataString += chunk;
-          });
-          res.on('end', () => {
-            resolve({
-              statusCode: 200,
-              body: JSON.parse(dataString)
+      if (costCenterURL) {
+        dataString = '';
+        const costCenterResponse = await new Promise((resolve, reject) => {
+          const req = https.get(costCenterURL, options, function(res) {
+            res.on('data', chunk => {
+              dataString += chunk;
+            });
+            res.on('end', () => {
+              resolve({
+                statusCode: 200,
+                body: JSON.parse(dataString)
+              });
             });
           });
+          req.on('error', (e) => {
+            console.error(e);
+          });
         });
-        req.on('error', (e) => {
-          console.error(e);
-        });
-      });
-      return costCenterResponse.body.result.code;
+        console.log(costCenterResponse.body.result.code);
+        if (costCenterResponse.body.result.code) {
+          return costCenterResponse.body.result.code;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
