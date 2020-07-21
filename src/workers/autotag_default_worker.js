@@ -3,6 +3,9 @@ import * as AWS from 'aws-sdk';
 import SETTINGS from '../autotag_settings';
 
 export const AUTOTAG_TAG_NAME_PREFIX = 'jbl:';
+
+const https = require('https');
+
 const AUTOTAG_CREATOR_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}creator_arn`;
 const AUTOTAG_CREATE_TIME_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}created_datetime`;
 const AUTOTAG_INVOKED_BY_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}invoked_by`;
@@ -215,11 +218,73 @@ class AutotagDefaultWorker {
   }
 
   getCostCenterTagValue() {
-    return (this.event.userIdentity && getOwnerEmailTagValue() ? getCostCenterByEmail() : false);
+    return (this.event.userIdentity && this.getOwnerEmailTagValue() ? this.getCostCenterByEmail() : false);
   }
 
   getCostCenterByEmail() {
-    return false;
+    if (this.getOwnerEmailTagValue() && this.getServiceNowCredentials()) {
+      var serviceNowCredentials = this.getServiceNowCredentials();
+      var getUserURL = "https://jabilit.service-now.com/api/now/table/sys_user?sysparm_query=email=" + this.getOwnerEmailTagValue();
+      var options = {
+        headers: {
+          'Authorization': 'Basic ' + Buffer.from(serviceNowCredentials.username + ':' + serviceNowCredentials.password).toString('base64')
+        }
+      };
+
+      let dataString = '';
+      const getUserResponse = await new Promise((resolve, reject) => {
+        const req = https.get(getUserURL, options, function(res) {
+          res.on('data', chunk => {
+            dataString += chunk;
+          });
+          res.on('end', () => {
+            resolve({
+              statusCode: 200,
+              body: JSON.parse(dataString)
+            });
+          });
+        });
+
+        req.on('error', (e) => {
+          console.error(e);
+        });
+      });
+
+      var costCenterURL = getUserResponse.body.result[0].cost_center.link;
+
+      dataString = '';
+      const costCenterResponse = await new Promise((resolve, reject) => {
+        const req = https.get(costCenterURL, options, function(res) {
+          res.on('data', chunk => {
+            dataString += chunk;
+          });
+          res.on('end', () => {
+            resolve({
+              statusCode: 200,
+              body: JSON.parse(dataString)
+            });
+          });
+        });
+        req.on('error', (e) => {
+          console.error(e);
+        });
+      });
+      return costCenterResponse.body.result.code;
+    } else {
+      return false;
+    }
+  }
+
+  getServiceNowCredentials() {
+    var secretsmanager = new AWS.SecretsManager({
+      region: "us-east-1"
+    });
+    if (SETTINGS.ServiceNowCredentialsARN) { 
+      var secretData = await secretsmanager.getSecretValue({SecretId: SETTINGS.ServiceNowCredentialsARN}).promise();
+      return JSON.parse(secretData.SecretString);
+    } else {
+      return false;
+    }
   }
 
   getCustomTags() {

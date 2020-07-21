@@ -8,5 +8,6 @@ export default {
     CostCenter: (process.env.COST_CENTER !== 'Disabled')
 
   },
-  CustomTags: (!process.env.CUSTOM_TAGS || process.env.CUSTOM_TAGS === '') ? '{}' : process.env.CUSTOM_TAGS
+  CustomTags: (!process.env.CUSTOM_TAGS || process.env.CUSTOM_TAGS === '') ? '{}' : process.env.CUSTOM_TAGS,
+  ServiceNowCredentialsARN: (!process.env.SERVICE_NOW_CREDENTIALS_ARN || process.env.SERVICE_NOW_CREDENTIALS_ARN === '') ? '' : process.env.SERVICE_NOW_CREDENTIALS_ARN
 };
