@@ -210,7 +210,7 @@ class AutotagDefaultWorker {
   }
 
   getCreatedDateTagValue() {
-    return new Date(this.event.eventTime).toISOString().slice(0,10);
+    return new Date(this.event.eventTime).toISOString().slice(0, 10);
   }
 
   getCostCenterTagName() {

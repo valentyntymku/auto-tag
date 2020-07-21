@@ -190,7 +190,9 @@
           "Statement": [
             {
               "Action": "secretsmanager:GetSecretValue",
-              "Resource": "${ServiceNowCredentialsARN}",
+              "Resource": {
+                "Fn::Sub": "${ServiceNowCredentialsARN}"
+              },
               "Effect": "Allow"
             },
             {
