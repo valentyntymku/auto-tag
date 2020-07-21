@@ -12,6 +12,11 @@
       "Type": "String",
       "Default": "autotag-0.5.0.zip"
     },
+    "ServiceNowCredentialsARN": {
+      "Description": "ARN of SecretsManager ServiceNow secret credentials(username/password)",
+      "Type": "String",
+      "Default": "arn:aws:secretsmanager:us-east-1:732284450354:secret:jbl-sn-creds-wCPNnp"
+    },
     "AutoTagDebugLogging": {
       "Description": "Enable/Disable Debug Logging for the Lambda Function for all processed CloudTrail events.",
       "Type": "String",
@@ -103,6 +108,9 @@
             },
             "CUSTOM_TAGS": {
               "Ref": "CustomTags"
+            },
+            "SERVICE_NOW_CREDENTIALS_ARN": {
+              "Ref": "ServiceNowCredentialsARN"
             }
           }
         }
@@ -180,6 +188,11 @@
         "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
+            {
+              "Action": "secretsmanager:GetSecretValue",
+              "Resource": "${ServiceNowCredentialsARN}",
+              "Effect": "Allow"
+            },
             {
               "Effect": "Allow",
               "Action": [
