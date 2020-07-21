@@ -275,7 +275,7 @@ class AutotagDefaultWorker {
     }
   }
 
-  getServiceNowCredentials() {
+  async getServiceNowCredentials() {
     var secretsmanager = new AWS.SecretsManager({
       region: "us-east-1"
     });
