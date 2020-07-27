@@ -1,22 +1,36 @@
-import get from 'lodash/get';
-import * as AWS from 'aws-sdk';
-import SETTINGS from '../autotag_settings';
+"use strict";
 
-export const AUTOTAG_TAG_NAME_PREFIX = 'jbl:';
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.AUTOTAG_TAG_NAME_PREFIX = void 0;
+
+var _get = _interopRequireDefault(require("lodash/get"));
+
+var AWS = _interopRequireWildcard(require("aws-sdk"));
+
+var _autotag_settings = _interopRequireDefault(require("../autotag_settings"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const AUTOTAG_TAG_NAME_PREFIX = 'jbl:';
+exports.AUTOTAG_TAG_NAME_PREFIX = AUTOTAG_TAG_NAME_PREFIX;
 
 const https = require('https');
 
 const AUTOTAG_CREATOR_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}creator_arn`;
 const AUTOTAG_CREATE_TIME_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}created_datetime`;
 const AUTOTAG_INVOKED_BY_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}invoked_by`;
-
 const AUTOTAG_OWNER_EMAIL_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}owner_email`;
 const AUTOTAG_CREATED_DATE_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}created_date`;
 const AUTOTAG_COST_CENTER_TAG_NAME = `${AUTOTAG_TAG_NAME_PREFIX}cost_center`;
-
 const ROLE_PREFIX = 'arn:aws:iam::';
-const ROLE_SUFFIX = ':role';
-// const MASTER_ROLE_NAME = 'AutoTagMasterRole';
+const ROLE_SUFFIX = ':role'; // const MASTER_ROLE_NAME = 'AutoTagMasterRole';
+
 const MASTER_ROLE_PATH = '/autotag/master/';
 
 class AutotagDefaultWorker {
@@ -24,20 +38,18 @@ class AutotagDefaultWorker {
     this.event = event;
     this.s3Region = s3Region;
     this.region = process.env.AWS_REGION;
-    this.roleName = process.env.ROLE_NAME;
-
-    // increase the retries for all AWS worker calls to be more resilient
+    this.roleName = process.env.ROLE_NAME; // increase the retries for all AWS worker calls to be more resilient
     // AWS.config.update({
     //   retryDelayOptions: {base: 300},
     //   maxRetries: 8
     // });
   }
-
   /* tagResource
   ** method: tagResource
   **
   ** Do nothing
   */
+
 
   tagResource() {
     return new Promise((resolve, reject) => {
@@ -53,13 +65,13 @@ class AutotagDefaultWorker {
   assumeRole(roleName) {
     return new Promise((resolve, reject) => {
       try {
-        AWS.config.region = 'us-east-1';
-        //Uncomment line below for AWS STS logging
+        AWS.config.region = 'us-east-1'; //Uncomment line below for AWS STS logging
         //AWS.config.logger = console;
+
         const sts = new AWS.STS();
         sts.assumeRole({
           RoleArn: this.getAssumeRoleArn(roleName),
-          RoleSessionName: `AutoTag-${(new Date()).getTime()}`,
+          RoleSessionName: `AutoTag-${new Date().getTime()}`,
           DurationSeconds: 900
         }, (err, data) => {
           if (err) {
@@ -95,23 +107,21 @@ class AutotagDefaultWorker {
   getAssumeRoleArn(roleName) {
     const accountId = this.getAccountId();
     return ROLE_PREFIX + accountId + ROLE_SUFFIX + MASTER_ROLE_PATH + roleName;
-  }
+  } // support for older CloudTrail logs
 
-  // support for older CloudTrail logs
+
   getAccountId() {
-    return (this.event.recipientAccountId ? this.event.recipientAccountId : this.event.userIdentity.accountId);
+    return this.event.recipientAccountId ? this.event.recipientAccountId : this.event.userIdentity.accountId;
   }
 
-  getAutotagTags() {
-    return [
-      this.getAutotagCreatorTag(),
-      this.getAutotagCreatedDateTag(),
-      ...(this.getOwnerEmailTagValue() && SETTINGS.AutoTags.OwnerEmail ? [this.getAutotagOwnerEmailTag()] : []),
-      ...(this.getCostCenterTagValue() && SETTINGS.AutoTags.CostCenter ? [this.getAutotagCostCenterTag()] : []),
-      ...(SETTINGS.AutoTags.CreateTime ? [this.getAutotagCreateTimeTag()] : []),
-      ...(this.getInvokedByTagValue() && SETTINGS.AutoTags.InvokedBy ? [this.getAutotagInvokedByTag()] : []),
-      ...this.getCustomTags()
-    ];
+  async getAutotagTags() {
+    var CostCenterTag = await this.getAutotagCostCenterTag();
+    return [this.getAutotagCreatorTag(), this.getAutotagCreatedDateTag(), 
+    ...(this.getOwnerEmailTagValue() && _autotag_settings.default.AutoTags.OwnerEmail ? [this.getAutotagOwnerEmailTag()] : []),
+    ...(CostCenterTag && _autotag_settings.default.AutoTags.CostCenter ? [CostCenterTag] : []), 
+    ...(_autotag_settings.default.AutoTags.CreateTime ? [this.getAutotagCreateTimeTag()] : []), 
+    ...(this.getInvokedByTagValue() && _autotag_settings.default.AutoTags.InvokedBy ? [this.getAutotagInvokedByTag()] : []), 
+    ...this.getCustomTags()];
   }
 
   getAutotagCreatorTag() {
@@ -149,11 +159,16 @@ class AutotagDefaultWorker {
     };
   }
 
-  getAutotagCostCenterTag() {
-    return {
-      Key: this.getCostCenterTagName(),
-      Value: this.getCostCenterTagValue()
-    };
+  async getAutotagCostCenterTag() {
+    var costCenterValue = await this.getCostCenterTagValue();
+    if (costCenterValue) {
+      return {
+        Key: this.getCostCenterTagName(),
+        Value: costCenterValue
+      };
+    } else {
+      return false;
+    }
   }
 
   getCreatorTagName() {
@@ -163,13 +178,9 @@ class AutotagDefaultWorker {
   getCreatorTagValue() {
     // prefer the this field for Federated Users
     // because it is the actual aws user and isn't truncated
-    if (this.event.userIdentity.type === 'FederatedUser'
-        && this.event.userIdentity.sessionContext
-        && this.event.userIdentity.sessionContext.sessionIssuer
-        && this.event.userIdentity.sessionContext.sessionIssuer.arn) {
-      return this.event.userIdentity.sessionContext.sessionIssuer.arn;
-    //} else if (this.event.userIdentity.type === 'AssumedRole') {
-    //  return (this.event.userIdentity.arn).match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)[0];
+    if (this.event.userIdentity.type === 'FederatedUser' && this.event.userIdentity.sessionContext && this.event.userIdentity.sessionContext.sessionIssuer && this.event.userIdentity.sessionContext.sessionIssuer.arn) {
+      return this.event.userIdentity.sessionContext.sessionIssuer.arn; //} else if (this.event.userIdentity.type === 'AssumedRole') {
+      //  return (this.event.userIdentity.arn).match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)[0];
     } else {
       return this.event.userIdentity.arn;
     }
@@ -188,7 +199,7 @@ class AutotagDefaultWorker {
   }
 
   getInvokedByTagValue() {
-    return (this.event.userIdentity && this.event.userIdentity.invokedBy ? this.event.userIdentity.invokedBy : false);
+    return this.event.userIdentity && this.event.userIdentity.invokedBy ? this.event.userIdentity.invokedBy : false;
   }
 
   getOwnerEmailTagName() {
@@ -196,8 +207,8 @@ class AutotagDefaultWorker {
   }
 
   getOwnerEmailTagValue() {
-    if ((this.event.userIdentity.arn).match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)) {
-      return (this.event.userIdentity.arn).match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)[0];
+    if (this.event.userIdentity.arn.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)) {
+      return this.event.userIdentity.arn.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)[0];
     } else {
       return false;
     }
@@ -215,69 +226,47 @@ class AutotagDefaultWorker {
     return AUTOTAG_COST_CENTER_TAG_NAME;
   }
 
-  getCostCenterTagValue() {
-    return (this.event.userIdentity && this.getOwnerEmailTagValue() ? this.getCostCenterByEmail() : false);
+  async getCostCenterTagValue() {
+    return await this.getCostCenterByEmail();
   }
 
-  async getCostCenterByEmail() {
-    if (this.getOwnerEmailTagValue() && this.getServiceNowCredentials()) {
-      var serviceNowCredentials = this.getServiceNowCredentials();
-      var getUserURL = "https://jabilit.service-now.com/api/now/table/sys_user?sysparm_query=email=" + this.getOwnerEmailTagValue();
+  async callServiceNowAPI(url, serviceNowCredentials) {
+    return new Promise((resolve, reject) => {
+      let dataString = '';
       var options = {
         headers: {
           'Authorization': 'Basic ' + Buffer.from(serviceNowCredentials.username + ':' + serviceNowCredentials.password).toString('base64')
         }
       };
-
-      let dataString = '';
-      const getUserResponse = await new Promise((resolve, reject) => {
-        const req = https.get(getUserURL, options, function(res) {
+        const req = https.get(url, options, function (res) {
           res.on('data', chunk => {
             dataString += chunk;
           });
           res.on('end', () => {
-            resolve({
-              statusCode: 200,
-              body: JSON.parse(dataString)
-            });
-          });
-        });
-
-        req.on('error', (e) => {
-          console.error(e);
-        });
-      });
-
-      var costCenterURL = getUserResponse.body.result[0].cost_center.link;
-      console.log(costCenterURL);
-
-      if (costCenterURL) {
-        dataString = '';
-        const costCenterResponse = await new Promise((resolve, reject) => {
-          const req = https.get(costCenterURL, options, function(res) {
-            res.on('data', chunk => {
-              dataString += chunk;
-            });
-            res.on('end', () => {
               resolve({
                 statusCode: 200,
                 body: JSON.parse(dataString)
               });
-            });
-          });
-          req.on('error', (e) => {
-            console.error(e);
           });
         });
-        console.log(costCenterResponse.body.result.code);
-        if (costCenterResponse.body.result.code) {
-          return costCenterResponse.body.result.code;
-        } else {
+        req.on('error', e => {
+          console.error(e);
           return false;
-        }
-      } else {
-        return false;
-      }
+        });
+    });
+  }
+
+  async getCostCenterByEmail() {
+    var getUserURL = "https://jabilit.service-now.com/api/now/table/sys_user?sysparm_query=email=valentyn_tymku@jabil.com";// + this.getOwnerEmailTagValue();
+    var serviceNowCredentials = await this.getServiceNowCredentials();
+    var userLink = await this.callServiceNowAPI(getUserURL, serviceNowCredentials);
+    if (userLink.body.result[0]) {
+      var costCenter = await this.callServiceNowAPI(userLink.body.result[0].cost_center.link, serviceNowCredentials);
+      console.log("Cost Center: " + costCenter.body.result.code);
+    }
+    
+    if (costCenter) {
+      return costCenter.body.result.code;
     } else {
       return false;
     }
@@ -287,8 +276,11 @@ class AutotagDefaultWorker {
     var secretsmanager = new AWS.SecretsManager({
       region: "us-east-1"
     });
-    if (SETTINGS.ServiceNowCredentialsARN) { 
-      var secretData = await secretsmanager.getSecretValue({SecretId: SETTINGS.ServiceNowCredentialsARN}).promise();
+
+    if (_autotag_settings.default.ServiceNowCredentialsARN) {
+      var secretData = await secretsmanager.getSecretValue({
+        SecretId: _autotag_settings.default.ServiceNowCredentialsARN
+      }).promise();
       return JSON.parse(secretData.SecretString);
     } else {
       return false;
@@ -296,39 +288,44 @@ class AutotagDefaultWorker {
   }
 
   getCustomTags() {
-    const keyword = '$event.';
-    // substitute any word starting with the keyword in the tag value with the actual value from the event
-    return this.objectMap(JSON.parse(SETTINGS.CustomTags), tagValue => {
-      let newTagValue = tagValue;
-      // split up the tag value by any character except these
-      const tagValueVariables = tagValue.match(/\$[A-Za-z0-9.]+/g) || [];
+    const keyword = '$event.'; // substitute any word starting with the keyword in the tag value with the actual value from the event
 
+    return this.objectMap(JSON.parse(_autotag_settings.default.CustomTags), tagValue => {
+      let newTagValue = tagValue; // split up the tag value by any character except these
+
+      const tagValueVariables = tagValue.match(/\$[A-Za-z0-9.]+/g) || [];
       tagValueVariables.forEach(tagValueVariable => {
-        const tagValueVariableReplacement = get(this.event, tagValueVariable.replace(keyword, ''), undefined);
+        const tagValueVariableReplacement = (0, _get.default)(this.event, tagValueVariable.replace(keyword, ''), undefined);
 
         if (tagValueVariableReplacement === undefined) {
           console.log(`WARN: Failed to perform the variable substitution for ${tagValueVariable}`);
-        }
-        // replace the variable in the tag value with the associated event value
+        } // replace the variable in the tag value with the associated event value
+
+
         newTagValue = newTagValue.replace(tagValueVariable, tagValueVariableReplacement);
-      });
-      // if all of the variable substitutions in the tag value have failed drop the entire tag
+      }); // if all of the variable substitutions in the tag value have failed drop the entire tag
+
       if (tagValueVariables.length > 0 && tagValueVariables.length === (newTagValue.match(/undefined/g) || []).length) {
         return false;
       }
 
       return newTagValue;
     });
-  }
+  } // returns a new array with the values at each key mapped using mapFn(value)
 
-  // returns a new array with the values at each key mapped using mapFn(value)
+
   objectMap(object, mapFn) {
     return Object.keys(object).reduce((result, key) => {
       const newValue = mapFn(object[key]);
-      if (newValue) result.push({ Key: key, Value: newValue });
+      if (newValue) result.push({
+        Key: key,
+        Value: newValue
+      });
       return result;
     }, []);
   }
+
 }
 
-export default AutotagDefaultWorker;
+var _default = AutotagDefaultWorker;
+exports.default = _default;
