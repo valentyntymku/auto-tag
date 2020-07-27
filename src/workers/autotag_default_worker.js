@@ -179,8 +179,7 @@ class AutotagDefaultWorker {
     // prefer the this field for Federated Users
     // because it is the actual aws user and isn't truncated
     if (this.event.userIdentity.type === 'FederatedUser' && this.event.userIdentity.sessionContext && this.event.userIdentity.sessionContext.sessionIssuer && this.event.userIdentity.sessionContext.sessionIssuer.arn) {
-      return this.event.userIdentity.sessionContext.sessionIssuer.arn; //} else if (this.event.userIdentity.type === 'AssumedRole') {
-      //  return (this.event.userIdentity.arn).match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)[0];
+      return this.event.userIdentity.sessionContext.sessionIssuer.arn;
     } else {
       return this.event.userIdentity.arn;
     }
@@ -257,7 +256,7 @@ class AutotagDefaultWorker {
   }
 
   async getCostCenterByEmail() {
-    var getUserURL = "https://jabilit.service-now.com/api/now/table/sys_user?sysparm_query=email=valentyn_tymku@jabil.com";// + this.getOwnerEmailTagValue();
+    var getUserURL = "https://jabilit.service-now.com/api/now/table/sys_user?sysparm_query=email=" + this.getOwnerEmailTagValue();
     var serviceNowCredentials = await this.getServiceNowCredentials();
     var userLink = await this.callServiceNowAPI(getUserURL, serviceNowCredentials);
     if (userLink.body.result[0]) {
@@ -274,7 +273,7 @@ class AutotagDefaultWorker {
 
   async getServiceNowCredentials() {
     var secretsmanager = new AWS.SecretsManager({
-      region: "us-east-1"
+      region: process.env.AWS_REGION
     });
 
     if (_autotag_settings.default.ServiceNowCredentialsARN) {
