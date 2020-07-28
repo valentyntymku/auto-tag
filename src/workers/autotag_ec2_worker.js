@@ -71,10 +71,11 @@ class AutotagEC2Worker extends AutotagDefaultWorker {
     }
   }
 
-  tagEC2Resources(resources, parentTags = { Tags: [] }) {
+  async tagEC2Resources(resources, parentTags = { Tags: [] }) {
+    const tags = await this.getEC2Tags(parentTags);
+    this.logTags(resources, tags, this.constructor.name);
+
     return new Promise((resolve, reject) => {
-      const tags = this.getEC2Tags(parentTags);
-      this.logTags(resources, tags, this.constructor.name);
       try {
         this.ec2.createTags({
           Resources: resources,
@@ -279,8 +280,8 @@ class AutotagEC2Worker extends AutotagDefaultWorker {
     return (this.getInvokedBy() === 'opsworks.amazonaws.com');
   }
 
-  getEC2Tags(parentTags) {
-    const tags = this.getAutotagTags();
+  async getEC2Tags(parentTags) {
+    const tags = await this.getAutotagTags();
     if (this.getEventName() === 'RunInstances') {
       // instances created by auto-scaling are always invoked by the root user
       // so we'll use the auto-scaling group's creator value.
