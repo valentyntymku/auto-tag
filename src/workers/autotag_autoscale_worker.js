@@ -18,10 +18,10 @@ class AutotagAutoscaleWorker extends AutotagDefaultWorker {
     await this.tagAutoscalingGroup();
   }
 
-  tagAutoscalingGroup() {
+  async tagAutoscalingGroup() {
+    const tagConfig = this.getAutoscalingTags(await this.getAutotagTags());
     return new Promise((resolve, reject) => {
       try {
-        const tagConfig = this.getAutoscalingTags(this.getAutotagTags());
         this.logTags(this.getAutoscalingGroupName(), tagConfig, this.constructor.name);
         this.autoscaling.createOrUpdateTags({
           Tags: tagConfig
