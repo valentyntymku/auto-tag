@@ -297,23 +297,6 @@
         }
       }
     },
-    "TriggerLambdaPermRegionHongKong": {
-      "Type": "AWS::Lambda::Permission",
-      "DependsOn": "AutoTagLambdaFunction",
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "AutoTagLambdaFunction",
-            "Arn"
-          ]
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": {
-          "Fn::Sub": "arn:aws:sns:ap-east-1:${AWS::AccountId}:AutoTag"
-        }
-      }
-    },
     "TriggerLambdaPermRegionTokyo": {
       "Type": "AWS::Lambda::Permission",
       "DependsOn": "AutoTagLambdaFunction",
@@ -328,40 +311,6 @@
         "Principal": "sns.amazonaws.com",
         "SourceArn": {
           "Fn::Sub": "arn:aws:sns:ap-northeast-1:${AWS::AccountId}:AutoTag"
-        }
-      }
-    },
-    "TriggerLambdaPermRegionSeoul": {
-      "Type": "AWS::Lambda::Permission",
-      "DependsOn": "AutoTagLambdaFunction",
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "AutoTagLambdaFunction",
-            "Arn"
-          ]
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": {
-          "Fn::Sub": "arn:aws:sns:ap-northeast-2:${AWS::AccountId}:AutoTag"
-        }
-      }
-    },
-    "TriggerLambdaPermRegionMumbai": {
-      "Type": "AWS::Lambda::Permission",
-      "DependsOn": "AutoTagLambdaFunction",
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "AutoTagLambdaFunction",
-            "Arn"
-          ]
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": {
-          "Fn::Sub": "arn:aws:sns:ap-south-1:${AWS::AccountId}:AutoTag"
         }
       }
     },
@@ -382,40 +331,6 @@
         }
       }
     },
-    "TriggerLambdaPermRegionSydney": {
-      "Type": "AWS::Lambda::Permission",
-      "DependsOn": "AutoTagLambdaFunction",
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "AutoTagLambdaFunction",
-            "Arn"
-          ]
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": {
-          "Fn::Sub": "arn:aws:sns:ap-southeast-2:${AWS::AccountId}:AutoTag"
-        }
-      }
-    },
-    "TriggerLambdaPermRegionCentral": {
-      "Type": "AWS::Lambda::Permission",
-      "DependsOn": "AutoTagLambdaFunction",
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "AutoTagLambdaFunction",
-            "Arn"
-          ]
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": {
-          "Fn::Sub": "arn:aws:sns:ca-central-1:${AWS::AccountId}:AutoTag"
-        }
-      }
-    },
     "TriggerLambdaPermRegionFrankfurt": {
       "Type": "AWS::Lambda::Permission",
       "DependsOn": "AutoTagLambdaFunction",
@@ -430,40 +345,6 @@
         "Principal": "sns.amazonaws.com",
         "SourceArn": {
           "Fn::Sub": "arn:aws:sns:eu-central-1:${AWS::AccountId}:AutoTag"
-        }
-      }
-    },
-    "TriggerLambdaPermRegionStockholm": {
-      "Type": "AWS::Lambda::Permission",
-      "DependsOn": "AutoTagLambdaFunction",
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "AutoTagLambdaFunction",
-            "Arn"
-          ]
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": {
-          "Fn::Sub": "arn:aws:sns:eu-north-1:${AWS::AccountId}:AutoTag"
-        }
-      }
-    },
-    "TriggerLambdaPermRegionIreland": {
-      "Type": "AWS::Lambda::Permission",
-      "DependsOn": "AutoTagLambdaFunction",
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "AutoTagLambdaFunction",
-            "Arn"
-          ]
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": {
-          "Fn::Sub": "arn:aws:sns:eu-west-1:${AWS::AccountId}:AutoTag"
         }
       }
     },
@@ -484,57 +365,6 @@
         }
       }
     },
-    "TriggerLambdaPermRegionParis": {
-      "Type": "AWS::Lambda::Permission",
-      "DependsOn": "AutoTagLambdaFunction",
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "AutoTagLambdaFunction",
-            "Arn"
-          ]
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": {
-          "Fn::Sub": "arn:aws:sns:eu-west-3:${AWS::AccountId}:AutoTag"
-        }
-      }
-    },
-    "TriggerLambdaPermRegionBahrain": {
-      "Type": "AWS::Lambda::Permission",
-      "DependsOn": "AutoTagLambdaFunction",
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "AutoTagLambdaFunction",
-            "Arn"
-          ]
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": {
-          "Fn::Sub": "arn:aws:sns:me-south-1:${AWS::AccountId}:AutoTag"
-        }
-      }
-    },
-    "TriggerLambdaPermRegionSaoPaulo": {
-      "Type": "AWS::Lambda::Permission",
-      "DependsOn": "AutoTagLambdaFunction",
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "AutoTagLambdaFunction",
-            "Arn"
-          ]
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": {
-          "Fn::Sub": "arn:aws:sns:sa-east-1:${AWS::AccountId}:AutoTag"
-        }
-      }
-    },
     "TriggerLambdaPermRegionNVirginia": {
       "Type": "AWS::Lambda::Permission",
       "DependsOn": "AutoTagLambdaFunction",
@@ -549,40 +379,6 @@
         "Principal": "sns.amazonaws.com",
         "SourceArn": {
           "Fn::Sub": "arn:aws:sns:us-east-1:${AWS::AccountId}:AutoTag"
-        }
-      }
-    },
-    "TriggerLambdaPermRegionOhio": {
-      "Type": "AWS::Lambda::Permission",
-      "DependsOn": "AutoTagLambdaFunction",
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "AutoTagLambdaFunction",
-            "Arn"
-          ]
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": {
-          "Fn::Sub": "arn:aws:sns:us-east-2:${AWS::AccountId}:AutoTag"
-        }
-      }
-    },
-    "TriggerLambdaPermRegionNCalifornia": {
-      "Type": "AWS::Lambda::Permission",
-      "DependsOn": "AutoTagLambdaFunction",
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "AutoTagLambdaFunction",
-            "Arn"
-          ]
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": {
-          "Fn::Sub": "arn:aws:sns:us-west-1:${AWS::AccountId}:AutoTag"
         }
       }
     },
