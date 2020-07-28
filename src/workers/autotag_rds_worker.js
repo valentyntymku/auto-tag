@@ -19,12 +19,12 @@ class AutotagRDSWorker extends AutotagDefaultWorker {
     await this.tagRDSResource();
   }
 
-  tagRDSResource() {
+  async tagRDSResource() {
+    const dbArn = this.getDbARN();
+    const tags = await this.getAutotagTags();
+    this.logTags(dbArn, tags, this.constructor.name);
     return new Promise((resolve, reject) => {
       try {
-        const dbArn = this.getDbARN();
-        const tags = this.getAutotagTags();
-        this.logTags(dbArn, tags, this.constructor.name);
         this.rds.addTagsToResource({
           ResourceName: dbArn,
           Tags: tags
